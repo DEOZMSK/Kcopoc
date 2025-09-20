@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marafon Quiz 33</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Стартовый экран -->
+    <section id="screen-start" class="screen active">
+      <h1>Пройди квиз из 33 вопросов</h1>
+      <p>Узнай, какая гуна у тебя преобладает</p>
+      <button id="btn-start">Начать</button>
+    </section>
+
+    <!-- Экран с вопросами -->
+    <section id="screen-quiz" class="screen">
+      <div id="question-container"></div>
+    </section>
+
+    <!-- Экран результата -->
+    <section id="screen-result" class="screen">
+      <h2 id="result-title"></h2>
+      <p id="result-text"></p>
+      <a id="result-link" href="#" target="_blank">Перейти в группу</a>
+      <button id="btn-restart">Пройти снова</button>
+    </section>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
