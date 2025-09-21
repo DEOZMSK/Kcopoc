@@ -167,9 +167,9 @@ const QUIZ = [
 ];
 
 const GROUPS = {
-  sat: {title:"Саттва — гармония", text:"Твоя природа — свет и ясность.", link:"https://t.me/+SNNjufNTtGJhMDI6"},
-  raj: {title:"Раджас — действие", text:"Ты движим страстью и энергией.", link:"https://t.me/+B-mozvEpxM5kZjVi"},
-  tam: {title:"Тамас — покой", text:"Тебе свойственна тяжесть и инерция.", link:"https://t.me/+K8aDzjYAsOg3Y2Fi"},
+  sat: {title:"Свет", text:"«..близки ясность и лёгкость. Внутри есть ощущение гармонии и света, которое хочется приумножить.»", link:"https://t.me/+SNNjufNTtGJhMDI6"},
+  raj: {title:"Огонь", text:"«..ведёт стремление к движению. Ты полон энергии, жажды перемен и готов открывать новые горизонты.»", link:"https://t.me/+B-mozvEpxM5kZjVi"},
+  tam: {title:"Ночь", text:"«..важно замедлиться и сохранить устойчивость. В покое ты находишь свою силу и глубину.»", link:"https://t.me/+K8aDzjYAsOg3Y2Fi"},
 };
 
 const app = {
