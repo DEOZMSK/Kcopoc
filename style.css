@@ -43,6 +43,11 @@ h2 {
   margin: 0 0 16px;
 }
 
+h1,
+h2 {
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.45), 0 0 24px rgba(212, 175, 55, 0.25);
+}
+
 p {
   margin: 0 0 16px;
   line-height: 1.5;
@@ -90,6 +95,22 @@ button:focus-visible,
 #result-link:focus-visible {
   outline: 2px solid #f1d37a;
   outline-offset: 2px;
+}
+
+#btn-start {
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  }
 }
 
 .answer {
