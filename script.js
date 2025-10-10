@@ -334,10 +334,24 @@ const app = {
   resultLink: document.getElementById("result-link")
 };
 
+const EMOJI_AFFINITY = {
+  "🌿": { sat: 1.25, raj: 0.9, tam: 0.75 },
+  "🔥": { sat: 0.85, raj: 1.2, tam: 0.9 },
+  "☾": { sat: 0.75, raj: 0.85, tam: 1.25 },
+  "⚖️": { sat: 1.05, raj: 1.05, tam: 0.95 },
+  "🜂": { sat: 0.95, raj: 1.15, tam: 0.95 }
+};
+
+const MAX_STREAK_BONUS = 3;
+const STREAK_STEP = 0.08;
+const POSITION_INFLUENCE = 0.3;
+const DIVERSITY_STEP = 0.02;
+
 let state = {
   index: 0,
   score: { sat: 0, raj: 0, tam: 0 },
-  quiz: []
+  quiz: [],
+  history: []
 };
 
 function shuffleArray(source) {
@@ -361,7 +375,8 @@ function startQuiz() {
     quiz: shuffleArray(BASE_QUIZ).map((question) => ({
       ...question,
       answers: shuffleArray(question.answers)
-    }))
+    })),
+    history: []
   };
 
   showScreen(app.quiz);
@@ -394,9 +409,17 @@ function renderQuestion() {
 }
 
 function selectAnswer(answer) {
+  const emoji = extractLeadingEmoji(answer.text);
+  const weightedScores = applyAdvancedScoring(answer, emoji);
+
   GUNA_KEYS.forEach((key) => {
-    const value = answer.scores?.[key] ?? 0;
-    state.score[key] += value;
+    state.score[key] += weightedScores[key];
+  });
+
+  state.history.push({
+    emoji,
+    raw: answer.scores,
+    weighted: weightedScores
   });
 
   state.index += 1;
@@ -405,6 +428,63 @@ function selectAnswer(answer) {
   } else {
     finishQuiz();
   }
+}
+
+function extractLeadingEmoji(text) {
+  if (!text) {
+    return null;
+  }
+  const match = text.trim().match(/^[^\w\s]/u);
+  return match ? match[0] : null;
+}
+
+function getCurrentStreak(emoji) {
+  if (!emoji || state.history.length === 0) {
+    return 1;
+  }
+
+  let streak = 1;
+  for (let i = state.history.length - 1; i >= 0; i -= 1) {
+    if (state.history[i].emoji === emoji) {
+      streak += 1;
+    } else {
+      break;
+    }
+  }
+  return Math.min(streak, MAX_STREAK_BONUS + 1);
+}
+
+function getDiversityFactor() {
+  if (state.history.length === 0) {
+    return 1;
+  }
+  const unique = new Set(state.history.map((item) => item.emoji).filter(Boolean));
+  return 1 + unique.size * DIVERSITY_STEP;
+}
+
+function applyAdvancedScoring(answer, emoji) {
+  const baseScores = {};
+  GUNA_KEYS.forEach((key) => {
+    baseScores[key] = answer.scores?.[key] ?? 0;
+  });
+
+  const totalQuestions = state.quiz.length || 1;
+  const positionFactor = 1 + (state.index / Math.max(1, totalQuestions - 1)) * POSITION_INFLUENCE;
+  const streak = getCurrentStreak(emoji);
+  const streakBonus = 1 + Math.min(streak - 1, MAX_STREAK_BONUS) * STREAK_STEP;
+  const diversityFactor = getDiversityFactor();
+
+  const affinity = emoji && EMOJI_AFFINITY[emoji] ? EMOJI_AFFINITY[emoji] : null;
+  const result = { sat: 0, raj: 0, tam: 0 };
+
+  GUNA_KEYS.forEach((key) => {
+    const affinityFactor = affinity ? affinity[key] ?? 1 : 1;
+    const momentum = 1 + (state.score[key] > 0 ? Math.log1p(state.score[key]) * 0.03 : 0);
+    const value = baseScores[key] * positionFactor * streakBonus * diversityFactor * affinityFactor * momentum;
+    result[key] = Number.isFinite(value) ? value : 0;
+  });
+
+  return result;
 }
 
 function finishQuiz() {
