@@ -1,4 +1,5 @@
 const GUNA_KEYS = ["sat", "raj", "tam"];
+const CONSENT_STORAGE_KEY = "quizConsent2025";
 
 const TAG_TO_GUNA = {
   compassion: { sat: 1.3, raj: 0.9, tam: 0.7 },
@@ -354,6 +355,85 @@ const app = {
   resultStats: document.getElementById("result-stats"),
   resultLink: document.getElementById("result-link")
 };
+
+const consentUI = {
+  overlay: document.getElementById("consent-overlay"),
+  checkbox: document.getElementById("consent-checkbox"),
+  continueBtn: document.getElementById("btn-consent-continue"),
+  declineBtn: document.getElementById("btn-consent-decline"),
+  blocker: document.getElementById("consent-blocker"),
+  returnBtn: document.getElementById("btn-consent-return")
+};
+
+let consentGranted = false;
+
+function setStartAvailability(allowed) {
+  if (!app.btnStart) {
+    return;
+  }
+  if (allowed) {
+    app.btnStart.removeAttribute("disabled");
+  } else {
+    app.btnStart.setAttribute("disabled", "disabled");
+  }
+}
+
+function showConsentModal() {
+  consentUI.overlay?.classList.remove("hidden");
+  consentUI.blocker?.classList.add("hidden");
+}
+
+function hideConsentModal() {
+  consentUI.overlay?.classList.add("hidden");
+}
+
+function applyConsentState(granted) {
+  consentGranted = granted;
+  if (granted) {
+    localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
+    hideConsentModal();
+    consentUI.blocker?.classList.add("hidden");
+    setStartAvailability(true);
+  } else {
+    localStorage.removeItem(CONSENT_STORAGE_KEY);
+    setStartAvailability(false);
+  }
+}
+
+function initializeConsent() {
+  const savedConsent = localStorage.getItem(CONSENT_STORAGE_KEY) === "granted";
+  if (savedConsent) {
+    applyConsentState(true);
+  } else {
+    applyConsentState(false);
+    showConsentModal();
+  }
+
+  consentUI.checkbox?.addEventListener("change", () => {
+    const isChecked = consentUI.checkbox.checked;
+    if (consentUI.continueBtn) {
+      consentUI.continueBtn.disabled = !isChecked;
+    }
+  });
+
+  consentUI.continueBtn?.addEventListener("click", () => {
+    if (!consentUI.checkbox || !consentUI.checkbox.checked) {
+      return;
+    }
+    applyConsentState(true);
+    app.btnStart?.focus();
+  });
+
+  consentUI.declineBtn?.addEventListener("click", () => {
+    applyConsentState(false);
+    hideConsentModal();
+    consentUI.blocker?.classList.remove("hidden");
+  });
+
+  consentUI.returnBtn?.addEventListener("click", () => {
+    showConsentModal();
+  });
+}
 
 const KARMA_FLOW = {
   multipliers: { sat: 1, raj: 1, tam: 1 },
@@ -745,5 +825,15 @@ function finishQuiz() {
   });
 }
 
-app.btnStart.addEventListener("click", startQuiz);
-app.btnRestart.addEventListener("click", startQuiz);
+function attemptQuizStart() {
+  if (!consentGranted) {
+    showConsentModal();
+    return;
+  }
+  startQuiz();
+}
+
+initializeConsent();
+
+app.btnStart.addEventListener("click", attemptQuizStart);
+app.btnRestart.addEventListener("click", attemptQuizStart);

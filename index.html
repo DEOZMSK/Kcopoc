@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Marafon Quiz 33</title>
+  <title>33 вопроса — квиз mr.Kcopoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app">
+  <div class="background-aurora" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="brand" aria-label="mr.Kcopoc">mr.<span>Kcopoc</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="https://www.xn--80aaahbt7bgdcmg.xn--80adxhks" target="_blank" rel="noopener">Главная</a>
+    </nav>
+  </header>
+  <main id="app" role="main">
     <!-- Стартовый экран -->
     <section id="screen-start" class="screen active">
       <h1>🜂 Тридцать три шага сквозь пепел</h1>
@@ -16,7 +29,7 @@
         Одни проходят её бегом и теряют отражение. Другие идут медленно и начинают видеть.
         В конце ты узнаешь, какая сила живёт внутри: Свет, Огонь или Ночь.
       </p>
-      <p style="opacity: 0.8; font-style: italic;">
+      <p class="start-subtitle">
         Пройди тридцать три сцены. Не спеши. Пусть сам путь расскажет, кто ты.
       </p>
       <button id="btn-start">Начать странствие</button>
@@ -24,7 +37,7 @@
 
     <!-- Экран с вопросами -->
     <section id="screen-quiz" class="screen">
-      <div id="question-container"></div>
+      <div id="question-container" class="question-card"></div>
     </section>
 
     <!-- Экран результата -->
@@ -32,10 +45,44 @@
       <h2 id="result-title"></h2>
       <p id="result-text"></p>
       <p id="result-stats" class="result-stats"></p>
-      <a id="result-link" href="#" target="_blank" rel="noopener noreferrer">Твой путь</a>
+      <a
+        id="result-link"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Твой путь</a>
       <button id="btn-restart">Нет? Заново!</button>
     </section>
+  </main>
+
+  <div id="consent-overlay" class="consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+    <div class="consent-modal">
+      <h2 id="consent-title">Перед началом — согласие</h2>
+      <p>
+        Перед началом подтвердите, что ознакомились с
+        <a href="https://www.xn--80aaahbt7bgdcmg.xn--80adxhks/legal/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>
+        и
+        <a href="https://www.xn--80aaahbt7bgdcmg.xn--80adxhks/legal/offer" target="_blank" rel="noopener">Публичной офертой</a>.
+      </p>
+      <label class="consent-checkbox">
+        <input type="checkbox" id="consent-checkbox" />
+        <span>Я согласен(на) с условиями</span>
+      </label>
+      <div class="consent-actions">
+        <button id="btn-consent-continue" disabled>Продолжить</button>
+        <button id="btn-consent-decline" class="ghost">Отказаться</button>
+      </div>
+    </div>
   </div>
+
+  <div id="consent-blocker" class="consent-blocker hidden" aria-live="polite">
+    <div class="consent-modal">
+      <h2>Прохождение теста невозможно без согласия</h2>
+      <p>Если передумаете — вернитесь и подтвердите ознакомление с условиями.</p>
+      <button id="btn-consent-return">Вернуться к условиям</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
